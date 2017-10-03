@@ -16,9 +16,6 @@ public abstract class ClypeData {
 	
 	private int type;
 	
-	
-	
-	
 	/**
 	 * @param userName Username of the client sending data.
 	 * @param type Type of transmission.
