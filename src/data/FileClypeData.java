@@ -1,5 +1,7 @@
 package data;
 
+import java.io.*;
+
 /**
  * @author pawlactb
  *
@@ -41,8 +43,9 @@ public class FileClypeData extends ClypeData {
 	}
 
 	
-	//void just to avoid the balking of the compiler
-	public void readFileContents() {}
+	public void readFileContents() throws IOException {
+		
+	}
 
 	public void writeFileContents() {}
 
@@ -51,6 +54,10 @@ public class FileClypeData extends ClypeData {
 	 */
 	public String getData() {
 		return this.fileContents;
+	}
+	
+	public String getData(String key) {
+		return this.decrypt(this.fileContents, key);
 	}
 
 	/* (non-Javadoc)

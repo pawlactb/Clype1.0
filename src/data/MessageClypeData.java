@@ -12,6 +12,17 @@ public class MessageClypeData extends ClypeData {
 	 * @param userName Username of the client sending data.
 	 * @param message Contents of text transmission.
 	 * @param type Type of transmission.
+	 * @param key Encryption key.
+	 */
+	public MessageClypeData(String userName, String message, int type, String key) {
+		super(userName, type);
+		this.message = this.encrypt(message, key);
+	}
+	
+	/**
+	 * @param userName Username of the client sending data.
+	 * @param message Contents of text transmission.
+	 * @param type Type of transmission.
 	 */
 	public MessageClypeData(String userName, String message, int type) {
 		super(userName, type);
@@ -28,6 +39,10 @@ public class MessageClypeData extends ClypeData {
 	 */
 	public String getData() {
 		return this.message;
+	}
+	
+	public String getData(String key) {
+		return this.decrypt(this.message, key);
 	}
 	
 	/* (non-Javadoc)
