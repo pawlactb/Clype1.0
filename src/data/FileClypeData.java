@@ -16,10 +16,14 @@ public class FileClypeData extends ClypeData {
 	 * @param fileName Filename of the file sent.
 	 * @param type Type of transmission.
 	 */
-	public FileClypeData(String userName, String fileName, int type) {
+	public FileClypeData(String userName, String fileName, int type) throws IllegalArgumentException  {
 		super(userName, type);
 		this.fileName = fileName;
 		this.fileContents = "";
+		
+		if(type != ClypeData.FILE){
+			throw new IllegalArgumentException("FileClypeData instantiated with non-file type.");
+		}
 	}
 	
 	public FileClypeData() {

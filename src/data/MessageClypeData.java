@@ -9,7 +9,7 @@ public class MessageClypeData extends ClypeData {
 	private String message;
 	
 	/**
-	 * @param userName Username of the client sending data.
+	 * @param userName User name of the client sending data.
 	 * @param message Contents of text transmission.
 	 * @param type Type of transmission.
 	 * @param key Encryption key.
@@ -17,6 +17,10 @@ public class MessageClypeData extends ClypeData {
 	public MessageClypeData(String userName, String message, int type, String key) {
 		super(userName, type);
 		this.message = this.encrypt(message, key);
+		
+		if(type == ClypeData.FILE){
+			throw new IllegalArgumentException("FileClypeData instantiated with non-file type.");
+		}
 	}
 	
 	/**
@@ -27,6 +31,10 @@ public class MessageClypeData extends ClypeData {
 	public MessageClypeData(String userName, String message, int type) {
 		super(userName, type);
 		this.message = message;
+		
+		if(type == ClypeData.FILE){
+			throw new IllegalArgumentException("FileClypeData instantiated with non-file type.");
+		}
 	}
 	
 	public MessageClypeData() {
