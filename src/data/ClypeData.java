@@ -4,9 +4,20 @@ import java.util.Date;
 
 public abstract class ClypeData {
 
+	public static final int USER_LIST = 0;
+	public static final int LOGOUT = 1;
+	public static final int FILE = 2;
+	public static final int MESSAGE = 3;
+	
+	
 	protected String userName;
-	private int type;
 	private Date date;
+	
+	
+	private int type;
+	
+	
+	
 	
 	/**
 	 * @param userName Username of the client sending data.

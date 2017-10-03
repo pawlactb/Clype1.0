@@ -44,10 +44,72 @@ public class FileClypeData extends ClypeData {
 
 	
 	public void readFileContents() throws IOException {
+		FileReader fr = null;
+		try {
+			fr = new FileReader(this.fileName);
+			fr.read(this.fileContents.toCharArray());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 		
+		finally{
+			try {
+				if(fr != null)
+				{
+					fr.close();
+				}
+				
+			}
+			catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * @param key encryption key
+	 * @throws IOException if there is an issue reading file.
+	 */
+	public void readFileContents(String key) throws IOException {
+		this.readFileContents();
+		this.fileContents = this.encrypt(this.fileContents, key);
 	}
 
-	public void writeFileContents() {}
+	/**
+	 * 
+	 */
+	public void writeFileContents() {
+		FileWriter fw = null;
+		
+		try {
+			fw = new FileWriter(this.fileName);
+			fw.write(this.fileContents);
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		finally{
+			try{
+				if(fw != null) {
+					fw.close();
+				}
+			}
+			catch(IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * @param key decryption key
+	 */
+	public void writeFileContents(String key) {
+		String fc = this.decrypt(this.fileContents, key);
+		this.writeFileContents();
+	}
 
 	/* (non-Javadoc)
 	 * @see data.ClypeData#getData()
