@@ -1,6 +1,14 @@
 package main;
 
-import data.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Scanner;
+
+import data.ClypeData;
+import data.FileClypeData;
+import data.MessageClypeData;
 
 /**
  * @author pawlactb
@@ -12,11 +20,19 @@ public class ClypeClient {
 	private static final String DEFAULT_HOST = "localhost";
 	private static final String DEFAULT_USER = "Anon";
 	
+	private static final String key = null;
+	
 	//members
 	private String    userName, hostName;
 	private int       port;
 	private boolean   closeConnection;
-	private ClypeData dataToSendToServer, dataToRecieveFromServer;
+	private ClypeData dataToSendToServer, dataToReceiveFromServer;
+	
+	private Scanner inFromStd = null;
+	
+	private ObjectInputStream inFromServer;
+	private ObjectOutputStream outToServer;
+	
 	
 	/**
 	 * @param userName Username of client.
@@ -30,7 +46,10 @@ public class ClypeClient {
 		this.closeConnection = false;
 		
 		this.dataToSendToServer = null;
-		this.dataToRecieveFromServer = null;
+		this.dataToReceiveFromServer = null;
+		
+		this.inFromServer = null;
+		this.outToServer = null;
 	}
 	
 	/**
@@ -63,8 +82,56 @@ public class ClypeClient {
 	public int getPort() {
 		return port;
 	}
-
-	public void start() {}
+	
+	public void start() {
+		this.inFromStd = new Scanner(System.in);
+		
+		readClientData();
+	}
+	
+	public void readClientData() throws FileNotFoundException, IOException {
+		System.out.println("Select Session Type");
+		System.out.println("0: List users");
+		System.out.println("1: Close Connection");
+		System.out.println("2: Send File");
+		System.out.println("3: Send Message");
+		
+		int session = inFromStd.nextInt();
+		
+		if (session == ClypeData.LOGOUT) {
+			closeConnection = true; 
+		}
+		else if (session == ClypeData.FILE) {
+			System.out.println("Enter filename");
+			String in = inFromStd.next();
+			dataToSendToServer = new FileClypeData(this.userName, in, ClypeData.FILE);
+			
+			try {
+				((FileClypeData) dataToSendToServer).readFileContents();
+			} catch (IOException ex) {
+				System.err.print("File error." + ex.getStackTrace());
+				dataToSendToServer = null;
+			}
+		}
+		else if (session == ClypeData.USERLIST) {
+			//TODO
+		}
+		
+		else { //message
+			System.out.println("Message");
+			String in = inFromStd.next();
+			dataToSendToServer = new MessageClypeData(this.userName, in, ClypeData.MESSAGE);
+		}	
+	}
+	
+	public void printData() {
+		if (this.dataToReceiveFromServer.getType() == ClypeData.FILE) {
+			((FileClypeData) dataToReceiveFromServer).writeFileContents();
+		}
+		else if (this.dataToReceiveFromServer.getType() == ClypeData.MESSAGE) {
+			System.out.println(((MessageClypeData) dataToReceiveFromServer).getData());
+		}
+	}
 	
 	public void sendData() {}
 	
@@ -76,8 +143,8 @@ public class ClypeClient {
 		result = prime * result + (closeConnection ? 1231 : 1237);
 		result = prime
 				* result
-				+ ((dataToRecieveFromServer == null) ? 0
-						: dataToRecieveFromServer.hashCode());
+				+ ((dataToReceiveFromServer == null) ? 0
+						: dataToReceiveFromServer.hashCode());
 		result = prime
 				* result
 				+ ((dataToSendToServer == null) ? 0 : dataToSendToServer
@@ -99,20 +166,24 @@ public class ClypeClient {
 		}
 		else return false;
 		
-		userName = this.userName == other.userName;
-		hostName = this.hostName == other.hostName;
-		port = this.port == other.port;
-		connection = this.closeConnection == other.closeConnection;
+		userName = this.userName == ((ClypeClient) other).getUserName();
+		hostName = this.hostName == ((ClypeClient) other).getHostName();
+		port = this.port == ((ClypeClient) other).getPort();
+		connection = this.closeConnection == ((ClypeClient) other).closeConnection;
 		
-		this.dataToSendToServer = null;
-		this.dataToRecieveFromServer = null;
+		data = this.dataToReceiveFromServer == ((ClypeClient) other).dataToReceiveFromServer && 
+				this.dataToSendToServer == ((ClypeClient) other).dataToSendToServer;
+		
+		return userName && hostName && port && connection && data;
+		
+		
 	}
 	
 	public String toString() {
 		return "ClypeClient\n User" + this.userName + "\n" +
 				"host: " + this.hostName + "\n" +
 				"port: " + this.port + "\n" +
-				this.dataToSendToServer + this.dataToRecieveFromServer;
+				this.dataToSendToServer + this.dataToReceiveFromServer;
 	}
 	
 

@@ -5,10 +5,11 @@ import java.util.Date;
 
 public abstract class ClypeData implements Serializable {
 
-	public static final int USER_LIST = 0;
+	public static final int USERLIST = 0;
 	public static final int LOGOUT = 1;
 	public static final int FILE = 2;
 	public static final int MESSAGE = 3;
+	
 	
 	
 	protected String userName;
