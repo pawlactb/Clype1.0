@@ -1,8 +1,9 @@
 package data;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public abstract class ClypeData {
+public abstract class ClypeData implements Serializable {
 
 	public static final int USER_LIST = 0;
 	public static final int LOGOUT = 1;
