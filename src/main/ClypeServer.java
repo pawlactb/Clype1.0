@@ -8,17 +8,19 @@ import data.ClypeData;
  *
  */
 public class ClypeServer {
+	private final static int DEFAULT_PORT = 7000;
+	
 	private int port;
 	private boolean closeConnection;
 	private ClypeData dataToReceiveFromClient;
 	private ClypeData dataToSendToClient;
-	static int DEFAULTPORT = 7000;
+	
 	
 	
 	/**
 	 * @param port port number for incoming connections.
 	 */
-	public ClypeServer( int port ) {
+	public ClypeServer(int port) {
 		this.closeConnection = false;
 		this.port = port;
 		this.dataToReceiveFromClient = null;
@@ -30,7 +32,7 @@ public class ClypeServer {
 	 * Default port is 7000
 	 */
 	public ClypeServer() {
-		this(DEFAULTPORT);
+		this(DEFAULT_PORT);
 	}
 	
 	
