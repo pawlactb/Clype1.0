@@ -245,7 +245,7 @@ public class ClypeClient {
 				this.dataToSendToServer + this.dataToReceiveFromServer;
 	}
 	
-	public static void main(String args, int argc) {
+	public static void main(String[] argv, int argc) {
 		switch(argc) {
 		
 		
