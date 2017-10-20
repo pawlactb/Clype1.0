@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import data.ClypeData;
@@ -39,10 +41,16 @@ public class ClypeClient {
 	 * @param hostName Hostname of client.
 	 * @param port Port number.
 	 */
-	public ClypeClient(String userName, String hostName, int port) {
+	public ClypeClient(String userName, String hostName, int port) throws IllegalArgumentException {
 		this.userName = userName;
 		this.hostName = hostName;
 		this.port = port;
+		
+		if(userName == null || hostName == null || port < 1024)
+		{
+			throw new IllegalArgumentException();
+		}
+		
 		this.closeConnection = false;
 		
 		this.dataToSendToServer = null;
@@ -84,9 +92,39 @@ public class ClypeClient {
 	}
 	
 	public void start() {
-		this.inFromStd = new Scanner(System.in);
+		inFromStd = new Scanner(System.in);
 		
-		readClientData();
+		try {
+			this.readClientData();
+		}
+		catch (IllegalArgumentException e) {
+			System.err.println("Illegal Argument!");
+			e.printStackTrace(System.err);
+		}
+		catch (IOException e) {
+			System.err.println("File error!");
+			e.printStackTrace(System.err);
+		}
+		
+		Socket sock;
+		
+		try {
+			sock = new Socket(hostName, port);
+			this.inFromServer = new ObjectInputStream(sock.getInputStream());
+			this.outToServer = new ObjectOutputStream(sock.getOutputStream());
+		}
+		catch (UnknownHostException e) {
+			System.err.println("Unknown host!");
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			System.err.println("IO error!");
+			e.printStackTrace(System.err);
+		}
+		
+		
+		
+		this.printData();
 	}
 	
 	public void readClientData() throws FileNotFoundException, IOException {
@@ -133,9 +171,30 @@ public class ClypeClient {
 		}
 	}
 	
-	public void sendData() {}
+	public void sendData() {
+		try {
+			this.outToServer.writeObject(dataToSendToServer);
+		} catch (IOException e) {
+			System.err.println("File error!");
+			e.printStackTrace(System.err);
+		}
+		
+	}
 	
-	public void receiveData() {}
+	public void receiveData() {
+		
+		try {
+			this.dataToReceiveFromServer = (ClypeData)this.inFromServer.readObject();
+		}
+		
+		catch (ClassNotFoundException e) {
+			System.err.println("Strange error!");
+			e.printStackTrace(System.err);
+		} catch (IOException e) {
+			System.err.println("File error!");
+			e.printStackTrace(System.err);
+		}
+	}
 	
 	public int hashCode() {
 		final int prime = 31;
@@ -184,6 +243,14 @@ public class ClypeClient {
 				"host: " + this.hostName + "\n" +
 				"port: " + this.port + "\n" +
 				this.dataToSendToServer + this.dataToReceiveFromServer;
+	}
+	
+	public static void main(String args, int argc) {
+		switch(argc) {
+		
+		
+		
+		}
 	}
 	
 
